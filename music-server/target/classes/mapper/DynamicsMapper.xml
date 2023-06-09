@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.yin.dao.DynamicsMapper">
+    <resultMap id="BaseResultMap" type="com.example.yin.domain.Dynamics">
+<!--        <id column="id" jdbcType="INTEGER" property="id" />-->
+
+    </resultMap>
+    <insert id="addDynamic" parameterType="com.example.yin.domain.Dynamics">
+        INSERT INTO `dynamic` VALUE(#{uid},#{uimg},NOW(),#{content},#{type},0,0,0,NULL,#{topicid},#{contentUrl})
+    </insert>
+    <delete id="deleteDynamic">
+        delete from dynamic where id = #{id};
+    </delete>
+    <!--    <sql id="Base_Column_List">-->
+<!--        id,-->
+<!--    </sql>-->
+    <select id="DynamicAll" resultType="com.example.yin.domain.Dynamics">
+        SELECT a.username,b.* FROM consumer a ,`dynamic` b WHERE a.id = b.uid  ORDER BY b.creatTime DESC;
+    </select>
+    <select id="DynamicById" resultType="com.example.yin.domain.Dynamics">
+        select * from dynamic where uid =#{uid};
+    </select>
+
+</mapper>

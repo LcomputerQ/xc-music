@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.yin.dao.FriendsMapper">
+    <resultMap id="BaseResultMap" type="com.example.yin.domain.Friends">
+        <!--        <id column="id" jdbcType="INTEGER" property="id" />-->
+        <result column="username" property="pyname" jdbcType="VARCHAR" />
+        <result column="id" property="prid" jdbcType="TINYINT" />
+        <result column="avator" property="pyurl" jdbcType="VARCHAR" />
+    </resultMap>
+    <insert id="addfris" parameterType="com.example.yin.domain.Friends">
+        INSERT INTO friends VALUES(#{uid},#{frid});
+    </insert>
+    <insert id="addfri" parameterType="com.example.yin.domain.Friends">
+        INSERT INTO friends VALUES(#{frid},#{uid});
+    </insert>
+    <select id="friAll" resultMap="BaseResultMap">
+        SELECT `username`,id,avator FROM consumer  a ,(SELECT frid FROM friends WHERE uid = #{uid}) b
+        WHERE a.id = b.frid;
+    </select>
+    <!--    <sql id="Base_Column_List">-->
+    <!--        id,-->
+    <!--    </sql>-->
+
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.yin.dao.CollectionsMapper">
+    <resultMap id="BaseResultMap" type="com.example.yin.domain.Collections">
+        <result column="uid" property="uId" jdbcType="INTEGER" />
+        <result column="songid" property="songId" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+    </resultMap>
+<!-- 用户添加收藏歌曲   -->
+    <insert id="userAddCollection" parameterType="collections">
+         insert into collections (uid,songid,`type`)values (#{uId},#{songId},#{type});
+     </insert>
+    <!--    返回指定用户的收藏歌曲-->
+    <select id="selectAll" resultType="com.example.yin.domain.Collections">
+         select * from collections WHERE uid = #{uId};
+    </select>
+<!--    搜索收藏歌曲-->
+    <select id="CollectionSongById" resultType="java.lang.String">
+        select type from  collections where  uid = #{uId} AND songid = #{songId};
+    </select>
+    <delete id="delSongByUId" parameterType="java.lang.Integer">
+        DELETE  FROM  collections WHERE  uid = #{uId} AND songid = #{songId};
+    </delete>
+</mapper>

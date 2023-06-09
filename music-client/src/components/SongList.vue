@@ -1,0 +1,168 @@
+<template>
+  <div class="content">
+    <el-table highlight-current-row :data="dataList" @row-click="handleClick">
+      <el-table-column prop="songName" label="歌曲" />
+      <el-table-column prop="singerName" label="歌手" />
+      <el-table-column prop="introduction" label="专辑" />
+      <el-table-column label="编辑" width="80" align="center">
+        <template #default="scope">
+          <el-dropdown>
+            <el-icon><MoreFilled /></el-icon>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  :icon="Download"
+                  @click="
+                    downloadMusic({
+                      songUrl: scope.row.url,
+                      songName: scope.row.name,
+                    })
+                  ">下载</el-dropdown-item>
+                  <!-- 删除歌曲 -->
+                <el-dropdown-item :icon="Delete" v-if="show" @click="deleteCollection({ id: scope.row.id})">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, getCurrentInstance, toRefs, computed, reactive ,ref} from "vue";
+import { useStore } from "vuex";
+import mixin from "@/mixins/mixin";
+import { MoreFilled, Delete, Download } from "@element-plus/icons-vue";
+import { HttpManager } from "@/api";
+import { Icon } from "@/enums";
+
+export default defineComponent({
+  components: {
+    MoreFilled,
+  },
+  props: {
+    songList: Array,
+    show: {
+      default: false
+    }
+  },
+  emits: ["changeData"],
+  setup(props) {
+    const { getSongTitle, getSingerName, playMusic, checkStatus, downloadMusic } = mixin();
+    
+    const { proxy } = getCurrentInstance();
+    const store = useStore();
+    // 获取音乐路径
+    const musicUrl = ref();
+    const { songList } = toRefs(props);
+
+    const iconList = reactive({
+      dislike: Icon.Dislike,
+      like: Icon.Like,
+    });
+
+    const songUrl = computed(() => store.getters.songUrl);
+    const singerName = computed(() => store.getters.singerName);
+    const songTitle = computed(() => store.getters.songTitle);
+    const dataList = computed( () => {
+      const list = [];
+      songList.value.forEach((item: any, index) => {
+        // console.log(item);
+        // 歌曲名
+        item["songName"] = getSingerName(item.name);//getSongTitle(item.name);
+        // 歌手
+        item["singerName"] = getSingerName(item.ar[0].name);
+        item["index"] = index;
+        // 专辑
+        item["introduction"] = getSingerName(item.al.name);
+        list.push(item);
+      });
+      return list;
+    });
+     async   function handleClick(row) {
+      // 根据id获取音乐路径
+      await HttpManager.getSongPlay(row.id).then((res) => {
+          row.url =  (res as ResponseBody).data[0].url
+          // console.log(res);
+       })
+       // 根据id获取音乐图片src
+       await HttpManager.getMusicImgUrl(row.id).then((res) => {
+        row.pic = (res as ResponseBody).songs[0].al.picUrl
+        
+         
+       })
+       
+      playMusic({
+        id: row.id,
+        url : row.url,
+        pic: row.pic,
+        index: row.index,
+        name: row.name,
+        lyric: row.lyric,
+        currentSongList: songList.value,
+      });
+    }
+  
+    const userId = computed(() => store.getters.userId);
+
+    async function deleteCollection({ id }) {
+      if (!checkStatus()) return;
+      let index;
+      for(let a in dataList.value){
+        if(dataList.value[a].id==id){
+          index=a;
+          break;
+        }
+      }
+      dataList.value.splice(index,1)              
+      const result = (await HttpManager.deleteCollection(userId.value, id)) as ResponseBody;
+      (proxy as any).$message({
+        message:'移除成功',
+        type: String,
+      });
+      proxy.$emit("changeData",  dataList.value);
+    }
+
+    return {
+      dataList,
+      iconList,
+      Delete,
+      Download,
+      songUrl,
+      singerName,
+      songTitle,
+      handleClick,
+      downloadMusic,
+      deleteCollection,
+    };
+  },
+  
+});
+
+
+</script>
+
+<style lang="scss" scoped>
+@import "@/assets/css/var.scss";
+@import "@/assets/css/global.scss";
+
+.content {
+  background-color: $color-white;
+  border-radius: $border-radius-songlist;
+  padding: 10px;
+}
+
+.content:deep(.el-table__row.current-row) {
+  color: $color-black;
+  font-weight: bold;
+}
+
+.content:deep(.el-table__row) {
+  cursor: pointer;
+}
+
+.icon {
+  @include icon(1.2em, $color-black);
+}
+</style>

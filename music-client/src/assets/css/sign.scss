@@ -1,0 +1,47 @@
+
+@import "@/assets/css/var.scss";
+@import "@/assets/css/global.scss";
+@media screen and (min-width: $sm) {
+  .sign {
+    width: 300px;
+    // position: absolute;
+    // left: 60vw;
+    // top: $header-height + 60px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: $sm) {
+  .sign {
+    width: 60vw;
+    position: relative;
+    margin: auto;
+    margin-top: -78vh;
+  }
+}
+
+.sign {
+  padding: 30px 50px;
+  border-radius: 20px;
+  z-index: 1000;
+  margin-top: 20px;
+  opacity: 0.9;
+  background: linear-gradient(70deg, #4e72b8, pink);
+  .sign-head {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .sign-btn:deep(.el-form-item__content) {
+    @include layout(space-between);
+    button {
+      width: 100%;
+      text-align: center;
+    }
+    button:hover {
+    background-color: #4e72b8;
+    }
+  }
+}

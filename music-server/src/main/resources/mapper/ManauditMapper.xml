@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.yin.dao.ManauditMapper">
+    <resultMap id="BaseResultMap" type="com.example.yin.domain.Manaudit">
+        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+    </resultMap>
+<!--    发送审核-->
+    <insert id="SendAudit" >
+        INSERT INTO manaudit VALUES(#{myid},#{pyid},1,'yes');
+    </insert>
+<!--    同意审核者-->
+    <insert id="ConsentAudit" parameterType="com.example.yin.domain.Manaudit">
+        INSERT INTO manaudit VALUES(#{pyid},#{myid},1,'no');
+    </insert>
+<!--    查看审核-->
+    <select id="AuditAll" resultType="com.example.yin.domain.Manaudit">
+        SELECT * FROM manaudit WHERE myid = #{myid} AND TYPE = 1 AND flag = 'no'
+    </select>
+<!--    通过审核 或者 没有通过-->
+    <update id="getApproved" parameterType="com.example.yin.domain.Admin">
+        UPDATE manaudit SET `type` = #{type} WHERE myid = #{myid} AND pyid = #{pyid} and flag = 'no';
+    </update>
+
+
+    <!--    <sql id="Base_Column_List">-->
+    <!--        id,-->
+    <!--    </sql>-->
+
+
+</mapper>

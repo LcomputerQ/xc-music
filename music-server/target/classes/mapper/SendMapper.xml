@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.yin.dao.SendMapper">
+    <resultMap id="BaseResultMap" type="com.example.yin.domain.Send">
+
+    </resultMap>
+<!--    我发送信息-->
+    <insert id="addMySend" parameterType="com.example.yin.domain.Send">
+        INSERT INTO send  VALUES(#{uid},#{mycontent},#{frid},NULL,NOW());
+    </insert>
+<!--    //    收到好友信息-->
+    <insert id="addfrSend" parameterType="com.example.yin.domain.Send">
+        INSERT INTO send  VALUES(#{uid},NULL,#{frid},#{mycontent},NOW());
+    </insert>
+    <!--    //    返回好友聊天记录-->
+    <select id="mySendAll" resultType="com.example.yin.domain.Send">
+        SELECT * FROM send WHERE uid = #{uid} AND frid = #{frid};
+    </select>
+    <!--    <sql id="Base_Column_List">-->
+    <!--        id,-->
+    <!--    </sql>-->
+</mapper>
